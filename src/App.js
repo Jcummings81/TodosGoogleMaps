@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
-import Test from './Test'
+import Gmap from './Gmap'
+import MapForm from './MapForm'
 
 
 
@@ -9,7 +8,9 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-       <Test />
+       <MapForm />
+       
+       <Gmap />
      
       </div>
     );
