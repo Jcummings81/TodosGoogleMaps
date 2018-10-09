@@ -14,9 +14,9 @@ class App extends Component {
 
   callback = (results, status) => {
     if (status == window.google.maps.places.PlacesServiceStatus.OK) {
-      for (var i = 0; i < results.length; i++) {
-        var place = results[i];
-        this.createMarker(results[i]);
+      for (let i = 0; i < results.length; i++) {
+        let places = results[i];
+        this.createMarker(places);
       }
     }
   }
@@ -32,17 +32,17 @@ componentDidMount() {
   }
 
   initMap = () => {
-    let pyrmont = new window.google.maps.LatLng(40.7610,-111.8829);
+    let DevPoint = new window.google.maps.LatLng(40.7610,-111.8829);
 
    const map = new window.google.maps.Map(document.getElementById('map'), {
-        center: pyrmont,
+        center: DevPoint,
         zoom: 15
       });
   
-    var request = {
-      location: pyrmont,
+    let request = {
+      location: DevPoint,
       radius: '500',
-      type: ['pizza']
+      type: ['restaurant']
     };
 
     const service = new window.google.maps.places.PlacesService(map);
