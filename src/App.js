@@ -78,6 +78,9 @@ componentDidMount() {
         zoom: 15
       });
 
+      
+   
+
     if(navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
           let pos = new window.google.maps.LatLng(position.coords.latitude,
@@ -87,6 +90,12 @@ componentDidMount() {
               map: map,
               position: pos,
               content: 'Found You!'
+          });
+
+          let marker = new window.google.maps.Marker({
+            position: {lat: 47.780, lng: -111.8829},
+            map: map,
+            title: 'Hello World!'
           });
 
           let request = {
@@ -100,6 +109,17 @@ componentDidMount() {
           service.nearbySearch(request, this.callback);
 
           map.setCenter(pos);
+
+          marker = new window.google.maps.Marker({
+            position: pos,
+            title:"Hello World!",
+            visible: true
+        });
+        marker.setMap(map);
+
+
+
+
 
       }, () => {
           this.handleNoGeolocation(true);
