@@ -5,13 +5,13 @@ import './App.css'
 
 class App extends Component {
 
-  createMarker = (place) => {
+//   createMarker = (place) => {
 
-    new window.google.maps.Marker({
-        position: place.geometry.location,
-        map: this.map
-    });
-}
+//     new window.google.maps.Marker({
+//         position: place.geometry.location,
+//         map: this.map
+//     });
+// }
 
   callback = (results, status) => {
     if (status === window.google.maps.places.PlacesServiceStatus.OK) {
@@ -64,12 +64,19 @@ componentDidMount() {
   
 
   renderMap = () => {
-    loadScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyC3GTxiL1yACghG2d7q_h2Jagj2MfajXdw&libraries=places,geometry&callback=initMap")
+    loadScript("https://maps.googleapis.com/maps/api/js?key=&libraries=places,geometry&callback=initMap")
     window.initMap = this.initMap
   }
 
 
   initMap = () => {
+
+   let DevPoint = new window.google.maps.LatLng(40.7610,-111.8829);
+
+   const map = new window.google.maps.Map(document.getElementById('map'), {
+        center: DevPoint,
+        zoom: 15
+      });
 
     if(navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
@@ -106,12 +113,7 @@ componentDidMount() {
  
 
 ////////////////////////////////////////////////////////////////
-  let DevPoint = new window.google.maps.LatLng(40.7610,-111.8829);
-
-   const map = new window.google.maps.Map(document.getElementById('map'), {
-        center: DevPoint,
-        zoom: 15
-      });
+  
   
   //   const request = {
   //     location: DevPoint,
