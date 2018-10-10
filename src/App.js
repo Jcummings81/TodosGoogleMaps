@@ -2,16 +2,9 @@ import React, { Component } from 'react';
 import './App.css'
 
 
-
 class App extends Component {
 
-//   createMarker = (place) => {
 
-//     new window.google.maps.Marker({
-//         position: place.geometry.location,
-//         map: this.map
-//     });
-// }
 
   callback = (results, status) => {
     if (status === window.google.maps.places.PlacesServiceStatus.OK) {
@@ -78,7 +71,7 @@ componentDidMount() {
         zoom: 15
       });
 
-      
+  
    
 
     if(navigator.geolocation) {
@@ -130,25 +123,9 @@ componentDidMount() {
   }
 
 
- 
-
-////////////////////////////////////////////////////////////////
-  
-  
-  //   const request = {
-  //     location: DevPoint,
-  //     radius: '5000',
-  //     type: ['airport']
-  //   };
-
-  //   const service = new window.google.maps.places.PlacesService(map);
-  //   service.nearbySearch(request, this.callback);
-
-
   }
 
   
-
   render() {
     return (
       <main>
@@ -158,11 +135,6 @@ componentDidMount() {
   }
 }
 
-/*
-<script async defer
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3GTxiL1yACghG2d7q_h2Jagj2MfajXdw&callback=initMap">
-    </script>
-*/
 
 function loadScript(url) {
   let index = window.document.getElementsByTagName("script")[0]
@@ -172,7 +144,5 @@ function loadScript(url) {
   script.defer = true
   index.parentNode.insertBefore(script, index)
 }
-
-//<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3GTxiL1yACghG2d7q_h2Jagj2MfajXdw&callback=initMap" async defer> </script>
 
 export default App
