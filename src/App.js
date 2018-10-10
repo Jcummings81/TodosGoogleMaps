@@ -5,12 +5,12 @@ import './App.css'
 class App extends Component {
 
 
-
   callback = (results, status) => {
     if (status === window.google.maps.places.PlacesServiceStatus.OK) {
       for (let i = 0; i < results.length; i++) {
         let places = results[i];
         this.createMarker(places);
+        console.log(places.name)
       }
     }
   }
@@ -71,9 +71,6 @@ componentDidMount() {
         zoom: 15
       });
 
-  
-   
-
     if(navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
           let pos = new window.google.maps.LatLng(position.coords.latitude,
@@ -86,20 +83,23 @@ componentDidMount() {
           });
 
           let marker = new window.google.maps.Marker({
-            position: {lat: 47.780, lng: -111.8829},
+            position: pos,
             map: map,
             title: 'Hello World!'
           });
 
           let request = {
               location: pos,
-              radius: 3218.69,
-              types: ['dentist']
+              radius: 50000,
+              types: ['gas_station']
           };
 
           let infowindow = new window.google.maps.InfoWindow();
           let service = new window.google.maps.places.PlacesService(map);
           service.nearbySearch(request, this.callback);
+
+
+          console.log(this.state)
 
           map.setCenter(pos);
 
