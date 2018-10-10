@@ -4,6 +4,10 @@ import './App.css'
 
 class App extends Component {
 
+  state = {
+    places: 'supermarket'
+  }
+
 
   callback = (results, status) => {
     if (status === window.google.maps.places.PlacesServiceStatus.OK) {
@@ -54,25 +58,29 @@ class App extends Component {
 componentDidMount() {
   this.renderMap()
 }
+
+componentDidUpdate(prevProps, prevState) {
+  if (prevState !== this.state) {
+    this.renderMap()
+  }
+}
   
 
   renderMap = () => {
-    loadScript("https://maps.googleapis.com/maps/api/js?key=&libraries=places,geometry&callback=initMap")
+    loadScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyB9bhaXpONrqDGJtDfdLQQOxn2qdKwGxvg&libraries=places,geometry&callback=initMap")
     window.initMap = this.initMap
   }
 
 
   initMap = () => {
-
-   let DevPoint = new window.google.maps.LatLng(40.7610,-111.8829);
-
-   const map = new window.google.maps.Map(document.getElementById('map'), {
+    let DevPoint = new window.google.maps.LatLng(40.7610, -111.8829);
+    const map = new window.google.maps.Map(document.getElementById('map'), {
         center: DevPoint,
         zoom: 15
       });
 
     if(navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
+          navigator.geolocation.getCurrentPosition((position) => {
           let pos = new window.google.maps.LatLng(position.coords.latitude,
                                      position.coords.longitude);
 
@@ -91,7 +99,7 @@ componentDidMount() {
           let request = {
               location: pos,
               radius: 50000,
-              types: ['gas_station']
+              types: [this.state.places]
           };
 
           let infowindow = new window.google.maps.InfoWindow();
@@ -110,10 +118,6 @@ componentDidMount() {
         });
         marker.setMap(map);
 
-
-
-
-
       }, () => {
           this.handleNoGeolocation(true);
       });
@@ -122,15 +126,19 @@ componentDidMount() {
       this.handleNoGeolocation(false);
   }
 
+  }
 
+  handleChange = (e) => {
+    this.setState({ places: e.target.value })
   }
 
   
   render() {
     return (
-      <main>
+      <>
         <div id="map"/>
-      </main>
+        <input onChange={this.handleChange}></input>
+      </>
     );
   }
 }
