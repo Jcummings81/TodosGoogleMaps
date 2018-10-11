@@ -7,7 +7,8 @@ class App extends Component {
   state = {
     searches: '',
     fire: false,
-    markers: []
+    markers: [],
+    mp: null
   }
 
 renderMap = () => {
@@ -57,18 +58,13 @@ componentDidUpdate(prevProps, prevState) {
 // }
 
   callback = (results, status) => {
-    let DevPoint = new window.google.maps.LatLng(40.7610, -111.8829);
-    const map = new window.google.maps.Map(document.getElementById('map'), {
-        center: DevPoint,
-        zoom: 15
-      });
-
+      const {mp} = this.state
     if (status === window.google.maps.places.PlacesServiceStatus.OK) {
 
       for (let i = 0; i < results.length; i++) {
         let places = results[i];
-        let x =  this.createMarker(places, map)
-        x.setMap(map)
+        let x =  this.createMarker(places, mp)
+        x.setMap(mp)
         console.log(places.name)
         
       }
@@ -112,6 +108,7 @@ componentDidUpdate(prevProps, prevState) {
           service.nearbySearch(request, this.callback);
 
         map.setCenter(pos);
+        this.setState({mp: map})
         
       }, () => {
           this.handleNoGeolocation(true);
