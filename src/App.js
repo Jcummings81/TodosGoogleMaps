@@ -5,11 +5,44 @@ import './App.css'
 class App extends Component {
 
   state = {
-    places: 'supermarket',
-    fire: false
+    searches: '',
+    fire: false,
+    marker: {}
   }
 
+renderMap = () => {
+    loadScript("https://maps.googleapis.com/maps/api/js?key=&libraries=places,geometry&callback=initMap")
+    window.initMap = this.initMap
+  }
 
+componentDidMount() {
+  this.renderMap()
+}
+
+componentDidUpdate(prevProps, prevState) {
+  if (prevState !== this.state) {
+    if (this.state.fire === true) {
+    this.renderMap()
+    this.setState({fire: false})
+    }
+  }
+}
+  
+
+  createMarker = (place) => {
+    let marker = new window.google.maps.Marker({
+        map: this.map,
+        position: place.geometry.location,
+        title: place.name,
+        animation: window.google.maps.Animation.DROP,
+
+    });
+
+    window.google.maps.event.addListener(marker, 'click', () => {
+        this.infowindow.setContent(place.name);
+        this.infowindow.open(this.map,marker);
+    });
+}
   callback = (results, status) => {
     if (status === window.google.maps.places.PlacesServiceStatus.OK) {
       for (let i = 0; i < results.length; i++) {
@@ -20,24 +53,55 @@ class App extends Component {
     }
   }
 
+  initMap = () => {
+    let DevPoint = new window.google.maps.LatLng(40.7610, -111.8829);
+    const map = new window.google.maps.Map(document.getElementById('map'), {
+        center: DevPoint,
+        zoom: 15
+      });
 
-  createMarker = (place) => {
-    let placeLoc = place.geometry.location;
-    let image = 'img/flag.png';
-    let marker = new window.google.maps.Marker({
-        map: this.map,
-        position: place.geometry.location,
-        title: place.name,
-        animation: window.google.maps.Animation.DROP,
-        icon: image
-    });
+    if(navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition((position) => {
+          let pos = new window.google.maps.LatLng(position.coords.latitude,
+                                     position.coords.longitude);
 
-    window.google.maps.event.addListener(marker, 'click', () => {
-        this.infowindow.setContent(place.name);
-        this.infowindow.open(this.map,marker);
-    });
-}
+          let infowindowLocation = new window.google.maps.InfoWindow({
+              map: map,
+              position: pos,
+              content: 'Your Location!'
+          });
 
+          let marker = new window.google.maps.Marker({
+            position: pos,
+            map: map,
+            title: 'Hello World!',
+            draggable: true
+          });
+
+          let request = {
+              location: pos,
+              radius: 50000,
+              types: [this.state.searches]
+          };
+
+          let infowindow = new window.google.maps.InfoWindow();
+          let service = new window.google.maps.places.PlacesService(map);
+          service.nearbySearch(request, this.callback);
+
+        map.setCenter(pos);
+
+
+        marker.setMap(map);
+
+      }, () => {
+          this.handleNoGeolocation(true);
+      });
+  } else {
+      // Browser doesn't support Geolocation
+      this.handleNoGeolocation(false);
+  }
+
+  }
 
   handleNoGeolocation = (errorFlag) => {
     if (errorFlag) {
@@ -56,90 +120,12 @@ class App extends Component {
     this.map.setCenter(options.position);
   }
 
-componentDidMount() {
-  this.renderMap()
-}
-
-componentDidUpdate(prevProps, prevState) {
-  if (prevState !== this.state) {
-    if (this.state.fire === true) {
-    this.renderMap()
-    this.setState({fire: false})
-    }
-  }
-}
-  
-
-  renderMap = () => {
-    loadScript("https://maps.googleapis.com/maps/api/js?key=&libraries=places,geometry&callback=initMap")
-    window.initMap = this.initMap
-  }
-
-
-  initMap = () => {
-    let DevPoint = new window.google.maps.LatLng(40.7610, -111.8829);
-    const map = new window.google.maps.Map(document.getElementById('map'), {
-        center: DevPoint,
-        zoom: 15
-      });
-
-    if(navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition((position) => {
-          let pos = new window.google.maps.LatLng(position.coords.latitude,
-                                     position.coords.longitude);
-
-          let infowindowLocation = new window.google.maps.InfoWindow({
-              map: map,
-              position: pos,
-              content: 'Found You!'
-          });
-
-          let marker = new window.google.maps.Marker({
-            position: pos,
-            map: map,
-            title: 'Hello World!'
-          });
-
-          let request = {
-              location: pos,
-              radius: 50000,
-              types: [this.state.places]
-          };
-
-          let infowindow = new window.google.maps.InfoWindow();
-          let service = new window.google.maps.places.PlacesService(map);
-          service.nearbySearch(request, this.callback);
-
-
-          console.log(this.state)
-
-          map.setCenter(pos);
-
-          marker = new window.google.maps.Marker({
-            position: pos,
-            title:"Hello World!",
-            visible: true
-        });
-        marker.setMap(map);
-
-      }, () => {
-          this.handleNoGeolocation(true);
-      });
-  } else {
-      // Browser doesn't support Geolocation
-      this.handleNoGeolocation(false);
-  }
-
-  }
-
-
  
 
 handleChange = (e) => {
-    this.setState({ places: e.target.value })
+    this.setState({ searches: e.target.value })
 
 }
-
 
 handleClick = (e) => {
   this.setState({ fire: true })
