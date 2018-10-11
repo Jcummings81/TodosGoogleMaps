@@ -7,7 +7,7 @@ class App extends Component {
   state = {
     searches: '',
     fire: false,
-    marker: {}
+    markers: []
   }
 
 renderMap = () => {
@@ -34,21 +34,37 @@ componentDidUpdate(prevProps, prevState) {
         map: this.map,
         position: place.geometry.location,
         title: place.name,
-        animation: window.google.maps.Animation.DROP,
+        draggable: true
+        //animation: window.google.maps.Animation.DROP,
 
     });
 
     window.google.maps.event.addListener(marker, 'click', () => {
-        this.infowindow.setContent(place.name);
-        this.infowindow.open(this.map,marker);
+        this.infowindow.setContent(this.place.name);
+        this.infowindow.open(this.map, marker);
+       
     });
-}
+        return marker;
+  }
+
+//  clearResults = (markers) => {
+//   for (var m in markers) {
+
+//     markers[m].setMap(null)
+//   }
+//   markers = []
+
+// }
+
   callback = (results, status) => {
+    const { markers } = this.state
     if (status === window.google.maps.places.PlacesServiceStatus.OK) {
       for (let i = 0; i < results.length; i++) {
         let places = results[i];
-        this.createMarker(places);
+        markers.push(this.createMarker(places))
+        markers[i].setMap(this.map)
         console.log(places.name)
+        
       }
     }
   }
@@ -71,6 +87,9 @@ componentDidUpdate(prevProps, prevState) {
               content: 'Your Location!'
           });
 
+          let markers = []
+
+
           let marker = new window.google.maps.Marker({
             position: pos,
             map: map,
@@ -89,10 +108,7 @@ componentDidUpdate(prevProps, prevState) {
           service.nearbySearch(request, this.callback);
 
         map.setCenter(pos);
-
-
-        marker.setMap(map);
-
+        
       }, () => {
           this.handleNoGeolocation(true);
       });
