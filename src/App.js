@@ -62,15 +62,16 @@ componentDidMount() {
 
 componentDidUpdate(prevProps, prevState) {
   if (prevState !== this.state) {
-    if (this.state.fire === true)
+    if (this.state.fire === true) {
     this.renderMap()
     this.setState({fire: false})
+    }
   }
 }
   
 
   renderMap = () => {
-    loadScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyB9bhaXpONrqDGJtDfdLQQOxn2qdKwGxvg&libraries=places,geometry&callback=initMap")
+    loadScript("https://maps.googleapis.com/maps/api/js?key=&libraries=places,geometry&callback=initMap")
     window.initMap = this.initMap
   }
 
@@ -138,12 +139,21 @@ handleChange = (e) => {
     this.setState({ places: e.target.value })
 
 }
+
+
+handleClick = (e) => {
+  this.setState({ fire: true })
+
+}
   
   render() {
     return (
       <>
         <div id="map"/>
-        <button type={"input"} onChange={this.handleChange} />
+        <input onChange={this.handleChange} />
+        <button onClick={this.handleClick}>
+          Search
+        </button>
       </>
     );
   }
