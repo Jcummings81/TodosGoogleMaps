@@ -5,7 +5,8 @@ import './App.css'
 class App extends Component {
 
   state = {
-    places: 'supermarket'
+    places: 'supermarket',
+    fire: false
   }
 
 
@@ -61,7 +62,9 @@ componentDidMount() {
 
 componentDidUpdate(prevProps, prevState) {
   if (prevState !== this.state) {
+    if (this.state.fire === true)
     this.renderMap()
+    this.setState({fire: false})
   }
 }
   
@@ -128,16 +131,19 @@ componentDidUpdate(prevProps, prevState) {
 
   }
 
-  handleChange = (e) => {
-    this.setState({ places: e.target.value })
-  }
 
+ 
+
+handleChange = (e) => {
+    this.setState({ places: e.target.value })
+
+}
   
   render() {
     return (
       <>
         <div id="map"/>
-        <input onChange={this.handleChange}></input>
+        <button type={"input"} onChange={this.handleChange} />
       </>
     );
   }
