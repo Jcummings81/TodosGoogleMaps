@@ -8,11 +8,15 @@ class App extends Component {
     searches: '',
     fire: false,
     markers: [],
-    mp: null
+    mp: null,
+    service: null,
+    infowindow: null,
+    x: '',
+    cleared: false,
   }
 
 renderMap = () => {
-    loadScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyDWAI1DF79TlvoiG1ZfkND1-ugMMMIYHOA&libraries=places,geometry&callback=initMap")
+    loadScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyBKms0Jghu9OEl1WkGFWYtNzvAMyhld47g&libraries=places,geometry&callback=initMap")
     window.initMap = this.initMap
   }
 
@@ -31,8 +35,9 @@ componentDidUpdate(prevProps, prevState) {
   
 
   createMarker = (place) => {
+    const {mp, infowindow, service, } = this.state
     let marker = new window.google.maps.Marker({
-        map: this.map,
+        map: mp,
         position: place.geometry.location,
         title: place.name,
         draggable: true
@@ -41,29 +46,22 @@ componentDidUpdate(prevProps, prevState) {
     });
 
     window.google.maps.event.addListener(marker, 'click', () => {
-        this.infowindow.setContent(place.name, this.map);
-        this.infowindow.open(this.map, marker);
+        infowindow.setContent(place.name, this.mp);
+        infowindow.open(this.map, marker);
        
     });
         return marker;
   }
 
-//  clearResults = (markers) => {
-//   for (var m in markers) {
-
-//     markers[m].setMap(null)
-//   }
-//   markers = []
-
-// }
 
   callback = (results, status) => {
-      const {mp} = this.state
-    if (status === window.google.maps.places.PlacesServiceStatus.OK) {
+      const {mp, service, infowindow, markers, cleared} = this.state
+    if ((status === window.google.maps.places.PlacesServiceStatus.OK) && !cleared) {
 
       for (let i = 0; i < results.length; i++) {
         let places = results[i];
         let x =  this.createMarker(places, mp)
+        markers.push(x)
         x.setMap(mp)
         console.log(places.name)
         
@@ -103,9 +101,10 @@ componentDidUpdate(prevProps, prevState) {
               types: [this.state.searches]
           };
 
-          let infowindow = new window.google.maps.InfoWindow();
-          let service = new window.google.maps.places.PlacesService(map);
-          service.nearbySearch(request, this.callback);
+          this.setState({infowindow: new window.google.maps.InfoWindow()})
+
+          this.setState({ service: new window.google.maps.places.PlacesService(map)})
+          this.state.service.nearbySearch(request, this.callback);
 
         map.setCenter(pos);
         this.setState({mp: map})
@@ -148,6 +147,17 @@ handleClick = (e) => {
   this.setState({ fire: true })
 
 }
+
+
+clearResults = () => {
+  const {mp, markers} = this.state  
+  for (let i=0; i<markers.length; i++) {
+    let x = markers[i]
+    this.setState({x: null})
+    x.setMap(mp)
+  }
+  this.setState({cleared: true})
+}
   
   render() {
     return (
@@ -156,6 +166,9 @@ handleClick = (e) => {
         <input onChange={this.handleChange} />
         <button onClick={this.handleClick}>
           Search
+        </button>
+        <button onClick={this.clearResults}>
+          Clear Map
         </button>
       </>
     );
