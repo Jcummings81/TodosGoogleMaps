@@ -2,3 +2,8 @@
 #map {
     height: 70vh;
   }
+
+
+  #pac-input:focus {
+    border-color: #4d90fe;
+  }

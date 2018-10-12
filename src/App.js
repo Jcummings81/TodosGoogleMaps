@@ -78,6 +78,8 @@ componentDidUpdate(prevProps, prevState) {
         zoom: 15
       });
 
+    
+
     if(navigator.geolocation) {
           navigator.geolocation.getCurrentPosition((position) => {
           let pos = new window.google.maps.LatLng(position.coords.latitude,
@@ -110,20 +112,19 @@ componentDidUpdate(prevProps, prevState) {
           this.setState({ service: new window.google.maps.places.PlacesService(map)})
           this.state.service.nearbySearch(request, this.callback);
 
-
-
-          // const {input, searchBox} = this.state
-          // this.setState({searchBox: new window.google.maps.places.SearchBox(map)})
-          // // map.controls[window.google.maps.ControlPosition.TOP_RIGHT].push(input);
-          
-
-
-    // // Bias the SearchBox results towards current map's viewport.
-    // map.addListener('bounds_changed', function() {
-    //   searchBox.setBounds(map.getBounds());
-    // });
+          var input = document.getElementById('pac-input');
+          var searchBox = new window.google.maps.places.SearchBox(input);
+          map.controls[window.google.maps.ControlPosition.TOP_LEFT].push(input);
+  
+          // Bias the SearchBox results towards current map's viewport.
+          map.addListener('bounds_changed', function() {
+            searchBox.setBounds(map.getBounds());
+          });
+        
 
         map.setCenter(pos);
+
+    
         this.setState({mp: map})
         
       }, () => {
@@ -154,6 +155,7 @@ componentDidUpdate(prevProps, prevState) {
     let infowindowLocation = new window.google.maps.InfoWindow(options);
     this.map.setCenter(options.position);
 
+    
 
      
   }
@@ -186,12 +188,16 @@ clearResults = () => {
       <>
         <div id="map"/>
         <input onChange={this.handleChange} />
-        <button onClick={this.handleClick}>
+        <button onClick={this.handleClick} onChange={this.searchBox}>
           Search
+        </button>
+        <button onClick={this.searchBox}>
+          SearchBox
         </button>
         <button onClick={this.clearResults}>
           Clear Map
         </button>
+        <input id="pac-input" class="controls" type="text" placeholder="Search Box"></input>
       </>
     );
   }
