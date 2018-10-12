@@ -13,10 +13,12 @@ class App extends Component {
     infowindow: null,
     x: '',
     cleared: false,
+    searchBox: null,
+    input: 'hello'
   }
 
 renderMap = () => {
-    loadScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyBKms0Jghu9OEl1WkGFWYtNzvAMyhld47g&libraries=places,geometry&callback=initMap")
+    loadScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyB42fDSaBjwjE5-TIUwEy-WJIk3camVa2A&libraries=places,geometry&callback=initMap")
     window.initMap = this.initMap
   }
 
@@ -101,10 +103,25 @@ componentDidUpdate(prevProps, prevState) {
               types: [this.state.searches]
           };
 
+
+
           this.setState({infowindow: new window.google.maps.InfoWindow()})
 
           this.setState({ service: new window.google.maps.places.PlacesService(map)})
           this.state.service.nearbySearch(request, this.callback);
+
+
+
+          // const {input, searchBox} = this.state
+          // this.setState({searchBox: new window.google.maps.places.SearchBox(map)})
+          // // map.controls[window.google.maps.ControlPosition.TOP_RIGHT].push(input);
+          
+
+
+    // // Bias the SearchBox results towards current map's viewport.
+    // map.addListener('bounds_changed', function() {
+    //   searchBox.setBounds(map.getBounds());
+    // });
 
         map.setCenter(pos);
         this.setState({mp: map})
@@ -131,9 +148,14 @@ componentDidUpdate(prevProps, prevState) {
       position: new window.google.maps.LatLng(40.7610, -111.8829),
       content: this.content
     };
+
+
   
     let infowindowLocation = new window.google.maps.InfoWindow(options);
     this.map.setCenter(options.position);
+
+
+     
   }
 
  
@@ -174,6 +196,9 @@ clearResults = () => {
     );
   }
 }
+
+
+
 
 
 function loadScript(url) {
