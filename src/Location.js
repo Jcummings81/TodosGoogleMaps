@@ -6,7 +6,7 @@ import './App.css'
 class Location extends Component {
 
 renderMap = () => {
-    loadScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyC_4HFiH0J1jVRrKVgPpvkYiIJa_nAhh84&libraries=places,geometry&callback=initMap")
+    loadScript("https://maps.googleapis.com/maps/api/js?key=&libraries=places,geometry&callback=initMap")
     window.initMap = this.initMap
   }
 
@@ -31,14 +31,13 @@ initMap = () => {
           let infowindow = new window.google.maps.InfoWindow({
               map: map,
               position: pos,
-              content: 'Your Location!'
+              content: 'Current Location'
                   });
 
 
           let marker = new window.google.maps.Marker({
             position: pos,
             map: map,
-            title: 'Hello World!',
             draggable: true
                   });
 
@@ -47,9 +46,6 @@ initMap = () => {
 
           map.controls[window.google.maps.ControlPosition.BOTTOM_LEFT].push(input);
 
-
-    
-  
           // Bias the SearchBox results towards current map's viewport.
           map.addListener('bounds_changed', function() {
             searchBox.setBounds(map.getBounds());
@@ -109,7 +105,7 @@ initMap = () => {
                           let cont = ('<div className="infoWindow"><strong>' + place.name + '</strong><br>' +
                           '<p>' + place.formatted_address + '</p>' +
                           '<a href="' + place.url + '" target="_blank">' +
-                          "Go To Webpage" + '</a>' + '</div>')   
+                          "Get More Info" + '</a>' + '</div>')   
 
                           window.google.maps.event.addListener(markers[i], 'click', () => {
                             infowindow.setContent(cont);
@@ -126,8 +122,6 @@ initMap = () => {
                             infowindow.open(map, markers[i]); 
                                   
                   })
-                 
-
 
                         if (place.geometry.viewport) {
                           // Only geocodes have viewport.
@@ -162,9 +156,6 @@ initMap = () => {
             position: new window.google.maps.LatLng(40.7610, -111.8829),
             content: this.content
           };
-  
-   
-
     let infowindowLocation = new window.google.maps.InfoWindow(options);
     this.map.setCenter(options.position);
      
@@ -174,7 +165,7 @@ initMap = () => {
     return (
       <Fragment>
         <div id="map"/>
-        <input id="pac-input" className="controls" type="text" placeholder="Search Box" autoFocus style={{height: "35px", fontSize: "12px"}}></input>
+        <input id="pac-input" className="controls" type="text" placeholder="Search Items" autoFocus style={{height: "35px", fontSize: "12px"}}></input>
       </Fragment>
     );
   }
