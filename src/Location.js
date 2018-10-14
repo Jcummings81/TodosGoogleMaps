@@ -7,7 +7,7 @@ import './App.css'
 class Location extends Component {
 
 renderMap = () => {
-    loadScript("https://maps.googleapis.com/maps/api/js?key=&libraries=places,geometry&callback=initMap")
+    loadScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyDWeUpWjIkNrehKaIw51lKoNwpmJPwDLtE&libraries=places,geometry&callback=initMap")
     window.initMap = this.initMap
   }
 
@@ -166,10 +166,7 @@ initMap = () => {
     return (
       <Fragment>
         <div id="map"/>
-        <MapForm >
-
-        </MapForm>
- 
+        <MapForm />
       </Fragment>
     );
   }

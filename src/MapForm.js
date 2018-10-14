@@ -1,7 +1,7 @@
 import React from 'react'
 
 class MapForm extends React.Component {
-
+  state = { items: [], name: '' }
 
 
   componentDidUpdate(prevProps, prevState) {
@@ -12,9 +12,9 @@ class MapForm extends React.Component {
       
     }
   }
-  state = { items: [], name: '' }
 
   handleChange = (e) => {
+    e.target.click()
     const { name, value } = e.target
     this.setState({ [name]: value })
     e.target.click()
@@ -32,10 +32,11 @@ class MapForm extends React.Component {
   }
 
   render() {
-    const { name, items } = this.state
+        const { name, items } = this.state
     return (
       <div >
         <form >
+          <button>
           <input id="pac-input" class="controls" type="text" autoFocus style={{height: "35px", fontSize: "12px"}}
             name="name"
             value={name}
@@ -43,8 +44,9 @@ class MapForm extends React.Component {
             onClick={this.handleClick}
             onChange={this.handleChange}
             onSubmit={this.handleSubmit}
-            placeholder="Add Item"
+            placeholder="Search Item"
           />
+         Clear Map </button>
           <ul>
             { items.map( (item, i) => <li key={i}>{item}</li> ) }
           </ul>
