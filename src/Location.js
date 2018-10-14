@@ -2,11 +2,11 @@ import React, { Component, Fragment } from 'react';
 import './App.css'
 
 
-class App extends Component {
 
+class Location extends Component {
 
 renderMap = () => {
-    loadScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyD9kLr4MK7Tu6wBgQRUDHh-_dW1oPEpQ9k&libraries=places,geometry&callback=initMap")
+    loadScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyC_4HFiH0J1jVRrKVgPpvkYiIJa_nAhh84&libraries=places,geometry&callback=initMap")
     window.initMap = this.initMap
   }
 
@@ -14,7 +14,9 @@ componentDidMount() {
   this.renderMap()
   }
 
+
 initMap = () => {
+
     let DevPoint = new window.google.maps.LatLng(40.7610, -111.8829);
     const map = new window.google.maps.Map(document.getElementById('map'), {
         center: DevPoint,
@@ -42,7 +44,11 @@ initMap = () => {
 
           var input = document.getElementById('pac-input');
           var searchBox = new window.google.maps.places.SearchBox(input);
+
           map.controls[window.google.maps.ControlPosition.BOTTOM_LEFT].push(input);
+
+
+    
   
           // Bias the SearchBox results towards current map's viewport.
           map.addListener('bounds_changed', function() {
@@ -52,9 +58,12 @@ initMap = () => {
           var markers = [];
           // Listen for the event fired when the user selects a prediction and retrieve
           // more details for that place.
+
           searchBox.addListener('places_changed', function() {
+            var service = new window.google.maps.places.PlacesService(map);
+
             var places = searchBox.getPlaces();
-  
+        
             if (places.length == 0) {
               return;
             }
@@ -72,15 +81,15 @@ initMap = () => {
                       console.log("Returned place contains no geometry");
                       return;
                             }
-
+                  
                     var icon = {
                       url: place.icon,
                       size: new window.google.maps.Size(71, 71),
                       origin: new window.google.maps.Point(0, 0),
                       anchor: new window.google.maps.Point(17, 34),
                       scaledSize: new window.google.maps.Size(25, 25)
-                            };
-        
+                            }
+                    
                   // Create a marker for each place.
                       markers.push(new window.google.maps.Marker({
                         map: map,
@@ -89,12 +98,37 @@ initMap = () => {
                         position: place.geometry.location
                               }));
 
-                  //Add infowindow to each marker
-                      window.google.maps.event.addListener(markers[i], 'click', () => {
-                        infowindow.setContent(place.name, map);
-                        infowindow.open(map, markers[i]);
-                      })
-                
+
+
+                  //Add infowindow to each marker with link to webpage
+                  service.getDetails({
+                    placeId: place.place_id
+                    }
+                    , function(place, status) {
+                    if (status === window.google.maps.places.PlacesServiceStatus.OK) {
+                          let cont = ('<div className="infoWindow"><strong>' + place.name + '</strong><br>' +
+                          '<p>' + place.formatted_address + '</p>' +
+                          '<a href="' + place.url + '" target="_blank">' +
+                          "Go To Webpage" + '</a>' + '</div>')   
+
+                          window.google.maps.event.addListener(markers[i], 'click', () => {
+                            infowindow.setContent(cont);
+                            infowindow.open(map, markers[i]); 
+                                          
+                          })    
+                    }}
+                  )
+
+                  let cont = ('<div className="infoWindow"><strong>' + place.name + '</strong><br>' +
+                          '<p>' + place.formatted_address + '</p>' + '</div>')  
+                          window.google.maps.event.addListener(markers[i], 'click', () => {
+                            infowindow.setContent(cont);
+                            infowindow.open(map, markers[i]); 
+                                  
+                  })
+                 
+
+
                         if (place.geometry.viewport) {
                           // Only geocodes have viewport.
                           bounds.union(place.geometry.viewport);
@@ -140,7 +174,7 @@ initMap = () => {
     return (
       <Fragment>
         <div id="map"/>
-        <input id="pac-input" class="controls" type="text" placeholder="Search Box" autofocus style={{height: "35px", fontSize: "12px"}}></input>
+        <input id="pac-input" className="controls" type="text" placeholder="Search Box" autoFocus style={{height: "35px", fontSize: "12px"}}></input>
       </Fragment>
     );
   }
@@ -155,4 +189,4 @@ function loadScript(url) {
   index.parentNode.insertBefore(script, index)
 }
 
-export default App
+export default Location
