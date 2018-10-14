@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import MapForm from './MapForm'
 import './App.css'
 
 
@@ -165,7 +166,10 @@ initMap = () => {
     return (
       <Fragment>
         <div id="map"/>
-        <input id="pac-input" className="controls" type="text" placeholder="Search Items" autoFocus style={{height: "35px", fontSize: "12px"}}></input>
+        <MapForm >
+
+        </MapForm>
+ 
       </Fragment>
     );
   }
