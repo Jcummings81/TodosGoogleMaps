@@ -7,17 +7,14 @@ class MapForm extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     const {name } = this.state
     if (prevState.name !== name ) {
-      this.setState({ name: name })
+      this.setState({ name: name })  
       console.log(this.state)
-      
     }
   }
 
   handleChange = (e) => {
-    e.target.click()
     const { name, value } = e.target
     this.setState({ [name]: value })
-    e.target.click()
   }
 
   handleClick = (e) => {
@@ -25,12 +22,13 @@ class MapForm extends React.Component {
     this.setState({ [name]: value })
   }
 
-  handleSubmit = (e) => {
-    e.preventDefault()
-    const { items, name } = this.state
-    this.setState({ items: [name, ...items], name: '' })
-  }
 
+  preload = (e) => {
+    const {name } = this.state
+    this.setState({name: ['walmart', ...name]})
+    
+  }
+ 
   render() {
         const { name, items } = this.state
     return (
@@ -41,9 +39,8 @@ class MapForm extends React.Component {
             name="name"
             value={name}
             required
-            onClick={this.handleClick}
+            onClick={this.preload}
             onChange={this.handleChange}
-            onSubmit={this.handleSubmit}
             placeholder="Search Item"
           />
          Clear Map </button>
