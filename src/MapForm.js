@@ -4,7 +4,8 @@ class MapForm extends React.Component {
   state = { items: [], name: '' }
 
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps, prevState, e) {
+    
     const {name } = this.state
     if (prevState.name !== name ) {
       this.setState({ name: name })  
@@ -17,16 +18,11 @@ class MapForm extends React.Component {
     this.setState({ [name]: value })
   }
 
-  handleClick = (e) => {
-    const { name, value } = e.target
-    this.setState({ [name]: value })
-  }
-
-
   preload = (e) => {
     const {name } = this.state
     this.setState({name: ['walmart', ...name]})
-    
+    var e = document.createEvent("KeyboardEvent");
+
   }
  
   render() {
