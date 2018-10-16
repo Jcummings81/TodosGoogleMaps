@@ -3,11 +3,10 @@ import MapForm from './MapForm'
 import './App.css'
 
 
-
 class Location extends Component {
 
 renderMap = () => {
-    loadScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyDblkVpcuCfny_N_Pwwu-vAAGaGdHJ9gdc&libraries=places,geometry&callback=initMap")
+    loadScript("https://maps.googleapis.com/maps/api/js?key=&libraries=places,geometry&callback=initMap")
     window.initMap = this.initMap
   }
 
@@ -19,6 +18,10 @@ componentDidMount() {
 
 initMap = () => {
 
+  let box = document.getElementById('pac-input')
+  setInterval(function(){ box.focus() }, 1000);
+
+
     let DevPoint = new window.google.maps.LatLng(40.7610, -111.8829);
     const map = new window.google.maps.Map(document.getElementById('map'), {
         center: DevPoint,
@@ -26,6 +29,7 @@ initMap = () => {
       });
 
     if(navigator.geolocation) {
+    
 
           navigator.geolocation.getCurrentPosition((position) => {
           let pos = new window.google.maps.LatLng(position.coords.latitude,
@@ -138,6 +142,7 @@ initMap = () => {
                                     });
         
             map.setCenter(pos);
+          
 
               }, () => {
                       this.handleNoGeolocation(true);
@@ -162,7 +167,8 @@ initMap = () => {
           };
     let infowindowLocation = new window.google.maps.InfoWindow(options);
     this.map.setCenter(options.position);
-     
+
+   
   }
 
   render() {

@@ -1,16 +1,16 @@
 import React from 'react'
 
 class MapForm extends React.Component {
-  state = { items: [], name: 'pizza' }
+  state = { items: [], name: 'walmart' }
 
-  componentDidMount = () => {
+componentDidMount() {
+}
 
-  }
 
-  componentDidUpdate(prevProps, prevState, e) {
+  componentDidUpdate(prevProps, prevState) {
+    setTimeout(() => {this.enter()}, 1000); 
     const {name } = this.state
     if (prevState.name !== name ) {
-
       this.setState({ name: name })  
     }
   }
@@ -24,7 +24,6 @@ class MapForm extends React.Component {
     const {name } = this.state
     this.setState({ name})
   }
-
 
   enter = (e) => {
     var txtbox = document.getElementById('pac-input');
@@ -51,25 +50,24 @@ class MapForm extends React.Component {
       returnValue: false,
       shiftKey: false,
       type: "keydown",
-      which: 13});
-    
-    txtbox.dispatchEvent(ev);
+      which: 13});  
+      txtbox.dispatchEvent(ev)
 
+    console.log('enter')
      }
  
   render() {
         const { name, items } = this.state
     return (
+
       <div >
         <form onSubmit={this.handleSubmit}>
           <button>
-          <input id="pac-input" class="controls" type="text"  style={{height: "35px", fontSize: "12px"}}
+          <input id="pac-input" className="controls" type="text"  style={{height: "35px", fontSize: "12px"}}
             name="name"
             value={name}
             onFocus={this.preload}
             onChange={this.handleChange}
-            onInput={this.enter}
-            onBlur={this.enter}
             placeholder="Search Item"
           />
          Clear Map </button>
