@@ -7,12 +7,13 @@ import './App.css'
 class Location extends Component {
 
 renderMap = () => {
-    loadScript("https://maps.googleapis.com/maps/api/js?key=&libraries=places,geometry&callback=initMap")
+    loadScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyDblkVpcuCfny_N_Pwwu-vAAGaGdHJ9gdc&libraries=places,geometry&callback=initMap")
     window.initMap = this.initMap
   }
 
 componentDidMount() {
   this.renderMap()
+ 
   }
 
 
@@ -25,6 +26,7 @@ initMap = () => {
       });
 
     if(navigator.geolocation) {
+
           navigator.geolocation.getCurrentPosition((position) => {
           let pos = new window.google.maps.LatLng(position.coords.latitude,
                                      position.coords.longitude);
@@ -57,6 +59,7 @@ initMap = () => {
           // more details for that place.
 
           searchBox.addListener('places_changed', function() {
+
             var service = new window.google.maps.places.PlacesService(map);
 
             var places = searchBox.getPlaces();
@@ -165,7 +168,7 @@ initMap = () => {
   render() {
     return (
       <Fragment>
-        <div id="map"/>
+        <div id="map" autoFocus />
         <MapForm />
       </Fragment>
     );
