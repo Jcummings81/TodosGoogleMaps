@@ -1,9 +1,10 @@
-import React from 'react'
-import Lists from './Lists'
+import React, {Fragment} from 'react'
+import { Form, Input, Button } from 'semantic-ui-react';
 import axios from 'axios'
 
 class MapForm extends React.Component {
   state = { name: 'walmart', lists: [], clicked: true }
+
 
 componentDidMount() {
   setTimeout(() => {this.getLists()}, 1000); 
@@ -16,13 +17,9 @@ componentDidMount() {
           })
     }
 
-  toggleClicked = () => {
-    const {clicked} = this.state
-    this.setState({clicked: !clicked})
-  }
+ 
   componentDidUpdate(prevProps, prevState) {
     const {name} = this.state
-      setTimeout(() => {this.enter()}, 1000); 
 
           if (prevState.name !== name ) {
             this.setState({ name: name })  
@@ -49,14 +46,8 @@ componentDidMount() {
     }
   }
 
-  enter = (e) => {
-    () => {
-      axios.get('/api/lists')
-      .then( res => {
-          this.setState({lists: res.data})
-      } )
-    }
-
+  enter = () => {
+  
     var txtbox = document.getElementById('pac-input');
   
     var ev = new KeyboardEvent('keydown', {altKey:false,
@@ -87,24 +78,30 @@ componentDidMount() {
     console.log('enter')
      }
 
+     toggleClicked = () => {
+      const {clicked} = this.state
+      this.setState({clicked: !clicked})
+      this.setState({ active: !this.state.active })
+      console.log(clicked)
+    }
+
     
   render() {
-        const { name, lists } = this.state
-    return (
+        const { name, active } = this.state
 
-      <div >
-        <form onSubmit={this.handleSubmit}>
-          <input id="pac-input" className="controls" type="text"  style={{height: "35px", fontSize: "12px"}}
+    return (
+      <Fragment>
+        <Form onSubmit={this.handleSubmit}>
+        <Button toggle active={active} onClick={() => this.toggleClicked()}>By List Name </Button>
+          <Input id="pac-input" className="controls" type="text"  style={{height: "65px", fontSize: "12px"}}
             name="name"
             value={name}
             onFocus={this.preload}
             onChange={this.handleChange}
             placeholder="Search Item"
           />
-          <button
-          onClick={this.toggleClicked}>Search By List</button>
-        </form>
-      </div>
+        </Form>
+      </Fragment>
     )
   }
 }

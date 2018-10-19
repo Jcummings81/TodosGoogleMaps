@@ -1,9 +1,11 @@
 import React, { Component, Fragment } from 'react';
+
 import MapForm from './MapForm'
 import './App.css'
 
 
 class Location extends Component {
+
   
 renderMap = () => {
     loadScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyDblkVpcuCfny_N_Pwwu-vAAGaGdHJ9gdc&libraries=places,geometry&callback=initMap")
@@ -163,13 +165,15 @@ initMap = () => {
    
   }
 
+  
+
   render() {
     return (
       
       <Fragment>
         <div id="map" autoFocus />
         
-        <MapForm> </MapForm>
+        <MapForm toggleClicked={this.toggleClicked}> </MapForm>
       </Fragment>
     );
   }
