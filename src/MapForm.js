@@ -1,31 +1,62 @@
 import React from 'react'
+import Lists from './Lists'
+import axios from 'axios'
 
 class MapForm extends React.Component {
-  state = { items: [], name: 'walmart' }
+  state = { name: 'walmart', lists: [], clicked: true }
 
 componentDidMount() {
-}
+  setTimeout(() => {this.getLists()}, 1000); 
+    }
 
+ getLists = () => {
+    axios.get('/api/lists')
+    .then( res => {
+        this.setState({lists: res.data})
+          })
+    }
 
+  toggleClicked = () => {
+    const {clicked} = this.state
+    this.setState({clicked: !clicked})
+  }
   componentDidUpdate(prevProps, prevState) {
-    setTimeout(() => {this.enter()}, 1000); 
-    const {name } = this.state
-    if (prevState.name !== name ) {
-      this.setState({ name: name })  
+    const {name} = this.state
+      setTimeout(() => {this.enter()}, 1000); 
+
+          if (prevState.name !== name ) {
+            this.setState({ name: name })  
+                }
+       }
+
+  handleChange = (e) => {
+    const {clicked, lists } = this.state
+
+    const { name, value } = e.target
+    if (clicked) {
+       this.setState({ [name]: lists[0].name})
+    } else {
+      this.setState({ [name]: value })
+          }
+      }
+
+  preload = () => {
+    const {clicked, lists, name } = this.state
+    if (clicked ) {
+    this.setState({ name: lists[0].name})
+    } else {
+      this.setState({ name: name })
     }
   }
 
-  handleChange = (e) => {
-    const { name, value } = e.target
-    this.setState({ [name]: value })
-  }
-
-  preload = (e) => {
-    const {name } = this.state
-    this.setState({ name})
-  }
-
   enter = (e) => {
+    () => {
+      axios.get('/api/lists')
+      .then( res => {
+          this.setState({lists: res.data})
+      } )
+    }
+
     var txtbox = document.getElementById('pac-input');
   
     var ev = new KeyboardEvent('keydown', {altKey:false,
@@ -55,14 +86,14 @@ componentDidMount() {
 
     console.log('enter')
      }
- 
+
+    
   render() {
-        const { name, items } = this.state
+        const { name, lists } = this.state
     return (
 
       <div >
         <form onSubmit={this.handleSubmit}>
-          <button>
           <input id="pac-input" className="controls" type="text"  style={{height: "35px", fontSize: "12px"}}
             name="name"
             value={name}
@@ -70,10 +101,8 @@ componentDidMount() {
             onChange={this.handleChange}
             placeholder="Search Item"
           />
-         Clear Map </button>
-          <ul>
-            { items.map( (item, i) => <li key={i}>{item}</li> ) }
-          </ul>
+          <button
+          onClick={this.toggleClicked}>Search By List</button>
         </form>
       </div>
     )

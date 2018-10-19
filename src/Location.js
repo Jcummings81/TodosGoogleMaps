@@ -4,23 +4,19 @@ import './App.css'
 
 
 class Location extends Component {
-
+  
 renderMap = () => {
-    loadScript("https://maps.googleapis.com/maps/api/js?key=&libraries=places,geometry&callback=initMap")
+    loadScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyDblkVpcuCfny_N_Pwwu-vAAGaGdHJ9gdc&libraries=places,geometry&callback=initMap")
     window.initMap = this.initMap
   }
 
-componentDidMount() {
-  this.renderMap()
- 
+  componentDidMount() {
+    this.renderMap()
   }
-
-
+  
 initMap = () => {
-
   let box = document.getElementById('pac-input')
-  setInterval(function(){ box.focus() }, 1000);
-
+  setInterval(function(){ box.focus() }, 5000);
 
     let DevPoint = new window.google.maps.LatLng(40.7610, -111.8829);
     const map = new window.google.maps.Map(document.getElementById('map'), {
@@ -30,7 +26,6 @@ initMap = () => {
 
     if(navigator.geolocation) {
     
-
           navigator.geolocation.getCurrentPosition((position) => {
           let pos = new window.google.maps.LatLng(position.coords.latitude,
                                      position.coords.longitude);
@@ -102,8 +97,6 @@ initMap = () => {
                         position: place.geometry.location
                               }));
 
-
-
                   //Add infowindow to each marker with link to webpage
                   service.getDetails({
                     placeId: place.place_id
@@ -139,18 +132,17 @@ initMap = () => {
                                   }
                                                             });
                             map.fitBounds(bounds);
-                                    });
+                                    });                    
         
-            map.setCenter(pos);
+                   map.setCenter(pos);
           
-
               }, () => {
                       this.handleNoGeolocation(true);
                     }); 
-              } else {
+                } else {
                   // Browser doesn't support Geolocation
                   this.handleNoGeolocation(false);
-              }
+                       }
   }
 
   handleNoGeolocation = (errorFlag) => {
@@ -173,9 +165,11 @@ initMap = () => {
 
   render() {
     return (
+      
       <Fragment>
         <div id="map" autoFocus />
-        <MapForm />
+        
+        <MapForm> </MapForm>
       </Fragment>
     );
   }
@@ -191,3 +185,4 @@ function loadScript(url) {
 }
 
 export default Location
+
