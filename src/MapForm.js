@@ -3,48 +3,63 @@ import { Form, Input, Button } from 'semantic-ui-react';
 import axios from 'axios'
 
 class MapForm extends React.Component {
-  state = { name: 'walmart', lists: [], clicked: true }
+  state = { name: 'walmart', lists: [], clicked: false, active: false, names: [], len: 0 , count: 0 }
 
 
 componentDidMount() {
-  setTimeout(() => {this.getLists()}, 1000); 
+  setTimeout(() => {this.getLists()},  1000); 
     }
 
- getLists = () => {
+    componentDidUpdate() {
+    }
+
+getLists = () => {
     axios.get('/api/lists')
     .then( res => {
         this.setState({lists: res.data})
-          })
+      })
     }
+    
+getNames = async () => {
+  const{ len, lists, names } = this.state
+  await this.getLists()
+  this.setState({len: lists.length})
+    for (let i = 0; i < len; i++) {
+        if (names.length < lists.length ) {
+        names.push(lists[i].name)
+  } else {
+    names
+  }
+}
 
- 
-  componentDidUpdate(prevProps, prevState) {
-    const {name} = this.state
+  return names
+}
 
-          if (prevState.name !== name ) {
-            this.setState({ name: name })  
-                }
-       }
+setName = async () => {
+  const { names, name, len, count } = this.state
+
+  if (count > len ) {
+    await this.setState({count: 0})
+  }
+
+    await this.setState({name: names[count]})
+    await this.setState({count: (count + 1)})
+  
+   await name
+}
+
 
   handleChange = (e) => {
-    const {clicked, lists } = this.state
-
     const { name, value } = e.target
-    if (clicked) {
-       this.setState({ [name]: lists[0].name})
-    } else {
       this.setState({ [name]: value })
-          }
       }
 
-  preload = () => {
-    const {clicked, lists, name } = this.state
-    if (clicked ) {
-    this.setState({ name: lists[0].name})
-    } else {
-      this.setState({ name: name })
-    }
-  }
+
+    loadName = async  () => {
+       await this.getNames()
+     await  this.setName()
+     await console.log(this.state.name)
+          }
 
   enter = () => {
   
@@ -79,10 +94,11 @@ componentDidMount() {
      }
 
      toggleClicked = () => {
-      const {clicked} = this.state
+      
+      const {clicked, active} = this.state
+
       this.setState({clicked: !clicked})
-      this.setState({ active: !this.state.active })
-      console.log(clicked)
+      this.setState({ active: !active })
     }
 
     
@@ -92,14 +108,15 @@ componentDidMount() {
     return (
       <Fragment>
         <Form onSubmit={this.handleSubmit}>
+        <Button toggle active={active} onClick={() => this.loadName()}>load</Button>
         <Button toggle active={active} onClick={() => this.toggleClicked()}>By List Name </Button>
           <Input id="pac-input" className="controls" type="text"  style={{height: "65px", fontSize: "12px"}}
             name="name"
             value={name}
-            onFocus={this.preload}
-            onChange={this.handleChange}
+           
             placeholder="Search Item"
           />
+
         </Form>
       </Fragment>
     )
