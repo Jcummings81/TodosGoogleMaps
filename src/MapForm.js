@@ -10,7 +10,13 @@ componentDidMount() {
   setTimeout(() => {this.getLists()},  1000); 
     }
 
-    componentDidUpdate() {
+
+    componentDidUpdate(prevProps, prevState, e) {
+      const {lists } = this.state
+      if (prevState.lists !== lists ) {
+         this.setState({ lists: lists})  
+        this.enter()
+      }
     }
 
 getLists = () => {
@@ -108,7 +114,7 @@ setName = async () => {
     return (
       <Fragment>
         <Form onSubmit={this.handleSubmit}>
-        <Button toggle active={active} onClick={() => this.loadName()}>load</Button>
+        <Button toggle active={active} onClick={() => this.loadName()}>Next List</Button>
         <Button toggle active={active} onClick={() => this.toggleClicked()}>By List Name </Button>
           <Input id="pac-input" className="controls" type="text"  style={{height: "65px", fontSize: "12px"}}
             name="name"
