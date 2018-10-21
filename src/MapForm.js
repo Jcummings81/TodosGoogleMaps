@@ -1,9 +1,9 @@
 import React, {Fragment} from 'react'
-import { Form, Input, Button } from 'semantic-ui-react';
+import { Form, Input, Button, Icon } from 'semantic-ui-react';
 import axios from 'axios'
 
 class MapForm extends React.Component {
-  state = { name: 'walmart', lists: [], clicked: false, active: false, names: [], len: 0 , count: 0 }
+  state = { name: '', lists: [], clicked: false, names: [], len: 0, mapform: false}
 
 
 componentDidMount() {
@@ -11,13 +11,13 @@ componentDidMount() {
     }
 
 
-    componentDidUpdate(prevProps, prevState, e) {
-      const {lists } = this.state
-      if (prevState.lists !== lists ) {
-         this.setState({ lists: lists})  
-        this.enter()
-      }
-    }
+componentDidUpdate(prevProps, prevState, e) {
+  const {name} = this.state
+  if (prevState.name !== name ) {
+      this.setState({ name: name})  
+    this.enter()
+  }
+}
 
 getLists = () => {
     axios.get('/api/lists')
@@ -40,32 +40,6 @@ getNames = async () => {
 
   return names
 }
-
-setName = async () => {
-  const { names, name, len, count } = this.state
-
-  if (count > len ) {
-    await this.setState({count: 0})
-  }
-
-    await this.setState({name: names[count]})
-    await this.setState({count: (count + 1)})
-  
-   await name
-}
-
-
-  handleChange = (e) => {
-    const { name, value } = e.target
-      this.setState({ [name]: value })
-      }
-
-
-    loadName = async  () => {
-       await this.getNames()
-     await  this.setName()
-     await console.log(this.state.name)
-          }
 
   enter = () => {
   
@@ -99,34 +73,40 @@ setName = async () => {
     console.log('enter')
      }
 
-     toggleClicked = () => {
-      
-      const {clicked, active} = this.state
-
-      this.setState({clicked: !clicked})
-      this.setState({ active: !active })
+  toggleClicked = () => {
+      const {clicked } = this.state
+        this.setState({clicked: !clicked})
     }
+
+
+  getName = () => {
+    document.getElementById('pac-input')
+      this.setState({ name: this.props.setName()})
+      console.log(this.state.name)
+    }
+  
 
     
   render() {
-        const { name, active } = this.state
-
-    return (
-      <Fragment>
-        <Form onSubmit={this.handleSubmit}>
-        <Button toggle active={active} onClick={() => this.loadName()}>Next List</Button>
-        <Button toggle active={active} onClick={() => this.toggleClicked()}>By List Name </Button>
-          <Input id="pac-input" className="controls" type="text"  style={{height: "65px", fontSize: "12px"}}
-            name="name"
-            value={name}
-           
-            placeholder="Search Item"
-          />
-
-        </Form>
+        const { name, mapform } = this.state
+ 
+      return (
+        <Fragment> 
+        <Input id="pac-input" className="controls" type="text"  style={{height: "65px", fontSize: "12px"}}
+        name="name"
+        value={name}
+        onFocus={() => this.getName()}
+        onChange={this.props.handleChange}
+        placeholder="Search Item"
+      />
+      <Icon size='small' name='map marker alternate' style={{cursor:'pointer', marginLeft:'5px'}} onClick={() => this.getName()} />   
       </Fragment>
-    )
+
+      )
+
   }
+
 }
 
 export default MapForm
+

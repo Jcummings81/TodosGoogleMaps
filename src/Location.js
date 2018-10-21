@@ -1,11 +1,9 @@
 import React, { Component, Fragment } from 'react';
-
-import MapForm from './MapForm'
 import './App.css'
-
 
 class Location extends Component {
 
+  state = {lists: []}
   
 renderMap = () => {
     loadScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyDblkVpcuCfny_N_Pwwu-vAAGaGdHJ9gdc&libraries=places,geometry&callback=initMap")
@@ -17,8 +15,6 @@ renderMap = () => {
   }
   
 initMap = () => {
-  let box = document.getElementById('pac-input')
-  setInterval(function(){ box.focus() }, 5000);
 
     let DevPoint = new window.google.maps.LatLng(40.7610, -111.8829);
     const map = new window.google.maps.Map(document.getElementById('map'), {
@@ -160,20 +156,15 @@ initMap = () => {
             content: this.content
           };
     let infowindowLocation = new window.google.maps.InfoWindow(options);
-    this.map.setCenter(options.position);
-
-   
+    this.map.setCenter(options.position); 
   }
 
-  
 
   render() {
     return (
       
       <Fragment>
-        <div id="map" autoFocus />
-        
-        <MapForm toggleClicked={this.toggleClicked}> </MapForm>
+        <div id="map"/>
       </Fragment>
     );
   }
