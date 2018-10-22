@@ -1,23 +1,14 @@
 import React, {Fragment} from 'react'
-import { Form, Input, Button, Icon } from 'semantic-ui-react';
+import {Input, Icon } from 'semantic-ui-react';
 import axios from 'axios'
 
 class MapForm extends React.Component {
-  state = { name: '', lists: [], clicked: false, names: [], len: 0, mapform: false}
+  state = { name: '', lists: [], clicked: false, names: [], len: 0}
 
 
 componentDidMount() {
   setTimeout(() => {this.getLists()},  1000); 
     }
-
-
-componentDidUpdate(prevProps, prevState, e) {
-  const {name} = this.state
-  if (prevState.name !== name ) {
-      this.setState({ name: name})  
-    this.enter()
-  }
-}
 
 getLists = () => {
     axios.get('/api/lists')
@@ -40,9 +31,7 @@ getNames = async () => {
 
   return names
 }
-
   enter = () => {
-  
     var txtbox = document.getElementById('pac-input');
   
     var ev = new KeyboardEvent('keydown', {altKey:false,
@@ -84,11 +73,14 @@ getNames = async () => {
       this.setState({ name: this.props.setName()})
       console.log(this.state.name)
     }
-  
 
+    handleChange = (e) => {
+      const { target:{name, value}} = e
+      this.setState({ [name]: value});
+    }
     
   render() {
-        const { name, mapform } = this.state
+        const { name } = this.state
  
       return (
         <Fragment> 
@@ -96,7 +88,7 @@ getNames = async () => {
         name="name"
         value={name}
         onFocus={() => this.getName()}
-        onChange={this.props.handleChange}
+        onChange={this.handleChange}
         placeholder="Search Item"
       />
       <Icon size='small' name='map marker alternate' style={{cursor:'pointer', marginLeft:'5px'}} onClick={() => this.getName()} />   

@@ -1,79 +1,85 @@
-import React, {Fragment} from 'react';
-import axios from 'axios';
-import { Container, Header, Card, Segment, Divider, Icon } from 'semantic-ui-react';
-import List from './List';
-import ListForm from './ListForm'
+import React, { Fragment } from 'react';
+import Items from './Items'
+import { Link } from 'react-router-dom'
+import { Card, Icon, Form, Input, Divider } from 'semantic-ui-react';
 import Location from './Location'
+import MapForm from './MapForm'
 
+class List extends React.Component {
+  state = { lists: [], showForm: false, hidemap: false }
 
-class Lists extends React.Component {
-  state = { lists: [], }
+  handleChange = (e) => {
+    const { target:{name, value}} = e
+    this.setState({ [name]: value});
+  }
   
-  componentDidMount() {
-    axios.get('/api/lists')
-      .then( ({ data: lists }) => this.setState({ lists }) )
+  handleSubmit = (e) => {
+    e.preventDefault();
+    this.props.updateList(this.state.name, this.state.id);
+    this.setState({ name: '', showForm: false })
   }
 
+  handleOpen = (id) => {
+    this.setState({ showForm: !this.state.showForm, id })
+  }
 
-  lists = () => {
-    return this.state.lists.map( (list) => (
-      <List  updateList={this.updateList} deleteList={this.deleteList} list={list}/>   
-      
-      )
-    )}
-    
-  addList = (name) => {
-    const { lists } = this.state;
-    axios.post('/api/lists', { name })
-      .then( ({ data }) => {
-        this.setState({ lists: [data, ...lists], name: '' })
-      })
+  handleClose = (id) => {
+    this.setState({ showForm: false })
+  }
+
+  setName = () => {
+    return this.props.list.name
     }
-  
-    updateList = (name, id) => {
-      axios.put(`/api/lists/${id}`, { name })
-        .then( ({ data }) => {
-          const lists = this.state.lists.map( list => {
-            if (list.id === id) {
-              return data
-            } else {
-              return list
-            }
-          })
-          this.setState({ lists, name: '' })
-        })
-      }
 
-  deleteList = (id) => {
-    axios.delete(`/api/lists/${id}`)
-      .then(res => {
-        const lists = this.state.lists.filter( list => {
-          if (list.id !== id)
-            return list
-          return null
-        })
-        this.setState({ lists })
-      })
+  handleForm = (id) => {
+    if (this.state.showForm) {
+      return(
+      <Fragment>
+        <Icon size='small' name='angle double up' style={{cursor:'pointer', marginLeft:'5px'}} onClick={() => this.handleClose(id)} />
+        <Divider hidden />
+        <Form onSubmit={this.handleSubmit}>
+          <Input
+            size="small"
+            name="name"
+            placeholder= {this.props.list.name}
+            value={this.state.name}
+            onChange={this.handleChange}
+          />
+        </Form>
+        <Location hidemap={!this.state.hidemap} /> 
+        <MapForm setName={this.setName}/>
+        
+        <Divider hidden />
+        <Icon size='small' name='trash' style={{cursor:'pointer', marginLeft:'5px'}} onClick={() => this.props.deleteList(id)} />   
+        <Link to={`/list/${id}/images`}><Icon size='small' color='black' name='paperclip' /></Link>        
+      </Fragment>
+      )
+    } else {
+      return (
+        <a onClick={() => this.handleOpen(id)}>{this.props.list.name}</a>
+      )
+    } 
   }
 
   render() {
+    const { id } =this.props.list
     return (
-      <Fragment>
-        <Location/>
-        <Container>
-          <h1>{this.props.x}</h1>
-          <Segment textAlign="center">
-            <Header as="h2" textAlign="center">Lists</Header>
-              <Divider />
-              <Card.Group itemsPerRow={4}>
-                {this.lists()}   
-                <ListForm addList={this.addList}/>           
-              </Card.Group>                     
-          </Segment>   
-        </Container>    
-      </Fragment>
-      )
-    }
+   <Fragment>
+      <Card key={id}>
+        <Card.Content>
+            <Card.Header>
+            {this.handleForm(id)}
+          </Card.Header>
+          <Divider />
+          <Card.Content>
+            <Items listId={id} />
+          </Card.Content>
+        </Card.Content>
+      </Card>
+  </Fragment>
+    
+    )
+  }
 }
 
-export default Lists;
+export default List
