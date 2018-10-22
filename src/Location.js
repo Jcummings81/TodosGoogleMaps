@@ -3,7 +3,7 @@ import './App.css'
 
 class Location extends Component {
 
-  state = {lists: []}
+  state = {lists: [] }
   
 renderMap = () => {
     loadScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyDblkVpcuCfny_N_Pwwu-vAAGaGdHJ9gdc&libraries=places,geometry&callback=initMap")
@@ -34,12 +34,38 @@ initMap = () => {
               content: 'Current Location'
                   });
 
-
           let marker = new window.google.maps.Marker({
             position: pos,
             map: map,
             draggable: true
                   });
+                marker.addListener('dragend', () => {
+            console.log(marker.getPosition().lat(), marker.getPosition().lng())
+          })
+
+          map.addListener( 'click', (e) => {
+
+
+          let newinfowindow = new window.google.maps.InfoWindow({
+            map: map,
+            position: e.latLng,
+            content: 'Home'
+                });
+
+
+            let newmarker = new window.google.maps.Marker({
+              position: e.latLng,
+              map: map,
+              draggable: true,
+                    });
+                    newmarker.addListener('dragend', () => {
+                      console.log(newmarker.getPosition().lat(), newmarker.getPosition().lng())
+                    })
+                    newmarker.addListener('click', () => {
+                      newinfowindow.open(map, newmarker )
+                    })
+         });
+
 
           var input = document.getElementById('pac-input');
           var searchBox = new window.google.maps.places.SearchBox(input);
@@ -164,7 +190,7 @@ initMap = () => {
     return (
       
       <Fragment>
-        <div id="map"/>
+        <div id="map" hidden={this.props.hidemap}/>
       </Fragment>
     );
   }

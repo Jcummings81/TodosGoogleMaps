@@ -3,7 +3,7 @@ import { Form, Input, Button, Icon } from 'semantic-ui-react';
 import axios from 'axios'
 
 class MapForm extends React.Component {
-  state = { name: '', lists: [], clicked: false, names: [], len: 0, mapform: false}
+  state = { name: '', lists: [], clicked: false, names: [], len: 0}
 
 
 componentDidMount() {
@@ -11,7 +11,7 @@ componentDidMount() {
     }
 
 
-componentDidUpdate(prevProps, prevState, e) {
+componentDidUpdate(prevState) {
   const {name} = this.state
   if (prevState.name !== name ) {
       this.setState({ name: name})  
@@ -88,7 +88,7 @@ getNames = async () => {
 
     
   render() {
-        const { name, mapform } = this.state
+        const { name } = this.state
  
       return (
         <Fragment> 
