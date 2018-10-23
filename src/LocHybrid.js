@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import './App.css'
 
-
 var inmarkers = [];
 var counter = 0;
 var addMarker = null
@@ -63,9 +62,6 @@ initMap = () => {
                             
                                       })
 
-
-
-/////////////////////////////////////////////
           window.google.maps.event.addListener(infowindow, 'domready', function () {
 
             var button, markerId, inputValue;
@@ -175,11 +171,6 @@ deleteMarker = (markerId) => {
 
   markers[markerId].setMap(null);
 }
-
-
-        ///////////////////////////////////////////////////////////////////
-
-        
 
           var input = document.getElementById('pac-input');
           var searchBox = new window.google.maps.places.SearchBox(input);
