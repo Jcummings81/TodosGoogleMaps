@@ -11,7 +11,7 @@ class Location extends Component {
   state = {lists: [] }
   
 renderMap = () => {
-    loadScript("https://maps.googleapis.com/maps/api/js?key=&libraries=places,geometry&callback=initMap")
+    loadScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyARE2AM1Aq0ArSI8vKtyWK3xDD0XHCsw0E&libraries=places,geometry&callback=initMap")
     window.initMap = this.initMap
   }
 
@@ -27,6 +27,7 @@ initMap = () => {
         zoom: 15
       });
 
+      let inwindow = new window.google.maps.InfoWindow();
       let infowindow = new window.google.maps.InfoWindow();
 
       window.google.maps.event.addListener(map, 'click', function (event) {
@@ -62,7 +63,7 @@ initMap = () => {
                             
                                       })
 
-          window.google.maps.event.addListener(infowindow, 'domready', function () {
+          window.google.maps.event.addListener(inwindow, 'domready', function () {
 
             var button, markerId, inputValue;
     
@@ -97,7 +98,7 @@ initMap = () => {
 // Function to set a marker title
 setMarkerTitle = (markerId, title) => {
   inmarkers[markerId].setTitle(title);
-  infowindow.close();
+  inwindow.close();
 }
 
 
@@ -111,24 +112,25 @@ addMarker = (location) => {
   var marker = new window.google.maps.Marker({
       position: location,
       map: map,
-      id: counter
+      id: counter, 
+      draggable: true
   });
 
          marker.addListener('dragend', () => {
             console.log(marker.getPosition().lat(), marker.getPosition().lng())
           })
           marker.addListener('click', () => {
-            infowindow.open(map, marker )
+            inwindow.open(map, marker )
             console.log(marker.getPosition().lat(), marker.getPosition().lng())
 
           })
 
   // Create title field and submit button
-  inputForm = 'Name:  <input type="text" id="nameinput" size="31" maxlength="31" value=""/>' + '<button id="inputButton" data-id="' + counter + '">Submit</button>';
+  inputForm = 'ListName:  <input type="text" id="nameinput" size="10" maxlength="15" value=""/>' + '<button id="inputButton" data-id="' + counter + '">Submit</button>';
 
   // Set infowindow content
-  infowindow.setContent(inputForm);
-  infowindow.open(map, marker);
+  inwindow.setContent(inputForm);
+  inwindow.open(map, marker);
 
   // Add marker to markers array
   inmarkers[counter] = marker;
@@ -137,8 +139,8 @@ addMarker = (location) => {
 
   // Right click event (to present delete marker button)
   window.google.maps.event.addListener(marker, 'rightclick', function () {
-      infowindow.setContent(deleteButton);
-      infowindow.open(map, marker);
+      inwindow.setContent(deleteButton);
+      inwindow.open(map, marker);
   });
 
   // Left click event (to present fields to set title)
@@ -157,11 +159,15 @@ addMarker = (location) => {
       }
 
       // Create title field and submit button
-      inputForm = 'Name:  <input type="text" id="nameinput" size="31" maxlength="31" tabindex="1" value="' + markerTitle + '"/>' + '<input type="button" id="inputButton" data-id="' + this.id + '" value="Submit">';
+      if ( markerTitle === '') {
+        inputForm = 'ListName:  <input type="text" id="nameinput" size="10" maxlength="15" value=""/>' + '<button id="inputButton" data-id="' + counter + '">Submit</button>';
+      } else {
+        inputForm =  markerTitle + ' <a type="none" id="nameinput" size="0"/>' + '<a id="inputButton" data-id="' + this.id + '"/>';
+      }
 
       // Set infowindow content
-      infowindow.setContent(inputForm);
-      infowindow.open(map, marker);
+      inwindow.setContent(inputForm);
+      inwindow.open(map, marker);
 
   });
 }
@@ -169,7 +175,7 @@ addMarker = (location) => {
 // Function to delete a marker
 deleteMarker = (markerId) => {
 
-  markers[markerId].setMap(null);
+  inmarkers[markerId].setMap(null);
 }
 
           var input = document.getElementById('pac-input');
@@ -309,4 +315,3 @@ function loadScript(url) {
 }
 
 export default Location
-
