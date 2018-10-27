@@ -1,12 +1,17 @@
 import React, { Component, Fragment } from 'react';
 import './App.css'
 
+var inmarkers = [];
+var counter = 0;
+var addMarker = null
+var deleteMarker = null
+var setMarkerTitle = null
 class Location extends Component {
 
   state = {lists: [] }
   
 renderMap = () => {
-    loadScript("https://maps.googleapis.com/maps/api/js?key=&libraries=places,geometry&callback=initMap")
+    loadScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyARE2AM1Aq0ArSI8vKtyWK3xDD0XHCsw0E&libraries=places,geometry&callback=initMap")
     window.initMap = this.initMap
   }
 
@@ -22,57 +27,156 @@ initMap = () => {
         zoom: 15
       });
 
+      let inwindow = new window.google.maps.InfoWindow();
+      let infowindow = new window.google.maps.InfoWindow();
+
+      window.google.maps.event.addListener(map, 'click', function (event) {
+
+        addMarker(event.latLng);
+    });
+
     if(navigator.geolocation) {
     
           navigator.geolocation.getCurrentPosition((position) => {
           let pos = new window.google.maps.LatLng(position.coords.latitude,
                                      position.coords.longitude);
 
-          let infowindow = new window.google.maps.InfoWindow({
-              map: map,
-              position: pos,
-              content: 'Current Location'
-                  });
+                                
+                            
+                                      let yourloc = new window.google.maps.InfoWindow({
+                                          map: map,
+                                          position: pos,
+                                          content: 'Current Location'
+                                              });
+                            
+                                      let homemarker = new window.google.maps.Marker({
+                                        position: pos,
+                                        map: map,
+                                        draggable: true
+                                              });
+                                            homemarker.addListener('dragend', () => {
+                                        console.log(homemarker.getPosition().lat(), homemarker.getPosition().lng())
+                                      })
+                                      homemarker.addListener('click', () => {
+                                        yourloc.open(map, homemarker )
+                                        console.log(homemarker.getPosition().lat(), homemarker.getPosition().lng())
+                            
+                                      })
 
-          let marker = new window.google.maps.Marker({
-            position: pos,
-            map: map,
-            draggable: true
-                  });
-                marker.addListener('dragend', () => {
+          window.google.maps.event.addListener(inwindow, 'domready', function () {
+
+            var button, markerId, inputValue;
+    
+            // Switch scenarii depending on infowindow contents
+            if (document.getElementById('deleteButton')) {
+    
+                // Bind action for delete button
+                button = document.getElementById('deleteButton');
+                button.focus();
+                markerId = parseInt(button.getAttribute('data-id'));
+                button.onclick = function () {
+                    
+                    // Call deleteMarker function
+                    deleteMarker(markerId);
+                };
+    
+            } else {
+    
+                // Bind action for set title button
+                button = document.getElementById('inputButton');
+                markerId = parseInt(button.getAttribute('data-id'));
+                button.onclick = function () {
+                    
+                    // Get input value and call setMarkerTitle function
+                    inputValue = document.getElementById('nameinput').value;
+                    setMarkerTitle(markerId, inputValue);
+                };
+                
+                document.getElementById('nameinput').focus();
+            }
+        });
+// Function to set a marker title
+setMarkerTitle = (markerId, title) => {
+  inmarkers[markerId].setTitle(title);
+  inwindow.close();
+}
+
+
+// Function to add a marker
+addMarker = (location) => {
+
+  var inputForm;
+  counter++;
+
+  // Create marker
+  var marker = new window.google.maps.Marker({
+      position: location,
+      map: map,
+      id: counter, 
+      draggable: true
+  });
+
+         marker.addListener('dragend', () => {
             console.log(marker.getPosition().lat(), marker.getPosition().lng())
           })
           marker.addListener('click', () => {
-            infowindow.open(map, marker )
+            inwindow.open(map, marker )
             console.log(marker.getPosition().lat(), marker.getPosition().lng())
 
           })
 
-          map.addListener( 'click', (e) => {
+  // Create title field and submit button
+  inputForm = 'ListName:  <input type="text" id="nameinput" size="10" maxlength="15" value=""/>' + '<button id="inputButton" data-id="' + counter + '">Submit</button>';
 
+  // Set infowindow content
+  inwindow.setContent(inputForm);
+  inwindow.open(map, marker);
 
-          let newinfowindow = new window.google.maps.InfoWindow({
-            map: map,
-            position: e.latLng,
-            content: 'Home'
-                });
+  // Add marker to markers array
+  inmarkers[counter] = marker;
 
+  var deleteButton = '<button id="deleteButton" data-id="' + counter + '">Delete</button>';
 
-            let newmarker = new window.google.maps.Marker({
-              position: e.latLng,
-              map: map,
-              draggable: true,
-                    });
-                    newmarker.addListener('dragend', () => {
-                      console.log(newmarker.getPosition().lat(), newmarker.getPosition().lng())
-                    })
-                    newmarker.addListener('click', () => {
-                      newinfowindow.open(map, newmarker )
-                      console.log(newmarker.getPosition().lat(), newmarker.getPosition().lng())
+  // Right click event (to present delete marker button)
+  window.google.maps.event.addListener(marker, 'rightclick', function () {
+      inwindow.setContent(deleteButton);
+      inwindow.open(map, marker);
+  });
 
-                    })
-         });
+  // Left click event (to present fields to set title)
+  window.google.maps.event.addListener(marker, 'click', function () {
 
+      var markerTitle;
+      
+      // Check if marker has title to prevent adding "undefined" to input field
+      if (this.getTitle()) {
+          
+          markerTitle = this.getTitle();
+          
+      } else {
+          
+          markerTitle = '';
+      }
+
+      // Create title field and submit button
+      if ( markerTitle === '') {
+        inputForm = 'ListName:  <input type="text" id="nameinput" size="10" maxlength="15" value=""/>' + '<button id="inputButton" data-id="' + counter + '">Submit</button>';
+      } else {
+        inputForm =  markerTitle + ' <a type="none" id="nameinput" size="0"/>' + '<a id="inputButton" data-id="' + this.id + '"/>';
+      }
+
+      // Set infowindow content
+      inwindow.setContent(inputForm);
+      inwindow.open(map, marker);
+
+  });
+}
+
+// Function to delete a marker
+deleteMarker = (markerId) => {
+
+  inmarkers[markerId].setMap(null);
+}
 
           var input = document.getElementById('pac-input');
           var searchBox = new window.google.maps.places.SearchBox(input);
@@ -102,7 +206,6 @@ initMap = () => {
                   markers.forEach( (marker) => {
                   marker.setMap(null);
                         });
-                            markers = [];
                                       
                   // For each place, get the icon, name and location.
                   var bounds = new window.google.maps.LatLngBounds();

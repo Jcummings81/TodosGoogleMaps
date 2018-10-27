@@ -56,7 +56,9 @@ class List extends React.Component {
       )
     } else {
       return (
-        <a onClick={() => this.handleOpen(id)}>{this.props.list.name}</a>
+        <a onClick={() => this.handleOpen(id)}>
+          {this.props.list.name}
+        </a>
       )
     } 
   }
@@ -64,20 +66,19 @@ class List extends React.Component {
   render() {
     const { id } =this.props.list
     return (
-   <Fragment>
-      <Card key={id}>
-        <Card.Content>
-            <Card.Header>
-            {this.handleForm(id)}
-          </Card.Header>
-          <Divider />
+      <Fragment>
+        <Card key={id}>
           <Card.Content>
-            <Items listId={id} />
+            <Card.Header>
+              {this.handleForm(id)}
+            </Card.Header>
+            <Divider />
+            <Card.Content>
+              <Items listId={id} />
+            </Card.Content>
           </Card.Content>
-        </Card.Content>
-      </Card>
-  </Fragment>
-    
+        </Card>
+      </Fragment>
     )
   }
 }
